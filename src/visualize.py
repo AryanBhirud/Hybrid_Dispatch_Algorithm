@@ -3,7 +3,7 @@ import numpy as np
 
 HOURS = 24
 
-def generate_reports(grid, metrics):
+def generate_reports(grid, hybrid_metrics, baseline_metrics):
     consumers = grid['consumers']
     
     # Combined metrics visualization
@@ -19,10 +19,12 @@ def generate_reports(grid, metrics):
     
     for idx, (metric_key, title) in enumerate(metric_titles, 1):
         plt.subplot(2, 3, idx)
-        plt.plot(metrics[metric_key])
+        plt.plot(hybrid_metrics[metric_key], label='Hybrid Dispatch', linestyle='-', color='blue')
+        plt.plot(baseline_metrics[metric_key], label='Baseline Algorithm', linestyle='--', color='red')
         plt.title(title)
         plt.xlabel('Hour')
         plt.grid(True)
+        plt.legend()
     
     # Priority allocation visualization
     plt.subplot(2, 3, 6)
@@ -38,8 +40,8 @@ def generate_reports(grid, metrics):
                 priority_data[prio]['alloc'].append(np.mean([c.hourly_allocation[hour] for c in p_consumers]))
     
     for prio in [1, 2, 3]:
-        plt.plot(priority_data[prio]['demand'], label=f'Prio {prio} Demand', linestyle='-')
-        plt.plot(priority_data[prio]['alloc'], label=f'Prio {prio} Allocation', linestyle='--')
+        plt.plot(priority_data[prio]['demand'], label=f'Prio {prio} Allocation', linestyle='-')
+        plt.plot(priority_data[prio]['alloc'], label=f'Prio {prio} Demand', linestyle='--')
     
     plt.title('Priority Level Demand vs Allocation')
     plt.xlabel('Hour')
